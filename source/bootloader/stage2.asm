@@ -10,10 +10,7 @@ start:
         mov     ss,     ax
         xor     sp,     sp
 
-        ; Enable A20 line using Fast Gate.
-        in      al,     0x92
-        or      al,     0x02
-        out     0x92,   al
+        call    stage2_enable_a20
 
         cli
         lgdt    [gdt32_descriptor]
@@ -23,6 +20,8 @@ start:
 
         jmp     dword   0x0008:(0x7E00 + enter_protected_mode)
 
+%include        "source/bootloader/stage2_enable_a20.asm"
+
 enter_protected_mode:
         bits    32
         
@@ -30,18 +29,20 @@ enter_protected_mode:
         mov     ds,     ax
         mov     es,     ax
         mov     ss,     ax
-
         lea     eax,    [0xb8000]
-  
         mov     dword   [eax],  0x9F4B9F4F
+
+        jmp     $
+
+enter_long_mode:
+        bits    64
         jmp     $
 
 gdt32_descriptor:
         dw      gdt32_end - gdt32_begin - 1
         dd      0x7E00 + gdt32_begin
 
-times   32 - ($ - $$) % 32 \
-        db      0x00
+align 0x04
 
 gdt32_begin:
         ; Null segment.
