@@ -1,13 +1,9 @@
 bits    16
 org     0x7C00
 
+jmp     word    start
+
 start:
-        ; Some BIOSes may set code segment to 0x07C0:0x0000 - jump to fix it.
-        jmp     .repair_code_segment
-
-.repair_code_segment:
-        cld
-
         ; Some BIOSes do not expose extensions if you don't ask for them first.
         mov     ah,     0x41    ; Procedure number - check for extensions.
         mov     bx,     0x55AA  ; Value required by a procedure.
@@ -30,7 +26,7 @@ start:
         int     0x13
 
         ; Jump to stage2.
-        jmp     0x2000:0x0000
+        jmp     word    0x07E0:0x0000
 
 .bios_not_supported:
         ; TODO: Print error message.
@@ -42,7 +38,7 @@ disk_address_packet:
         dw      0xEFBE      ; Number of segments to load - will be set by a build script.
         ; Address to load rest of the system.
         dw      0x0000      ; Offset.
-        dw      0x2000      ; Segment.
+        dw      0x07E0      ; Segment.
         ; Segment to start loading from.
         dq      0x0000000000000001
 
