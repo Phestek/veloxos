@@ -1,5 +1,5 @@
-[bits 16]
-[org 0x0000]
+bits    16
+org     0x0000
 
 start:
         call    stage2_enable_a20
@@ -20,7 +20,7 @@ start:
         or      eax,    1
         mov     cr0,    eax
 
-        jmp     dword   0x0008:(0x20000 + enter_protected_mode)
+        jmp     dword   0x00000008:(0x00020000 + enter_protected_mode)
 
 %include "source/bootloader/stage2_enable_a20.asm"
 %include "source/bootloader/stage2_gdt.asm"
@@ -28,12 +28,12 @@ start:
 enter_protected_mode:
         bits    32
 
-        mov     ax,     0x10
+        mov     ax,     0x0010
         mov     ds,     ax
         mov     es,     ax
         mov     ss,     ax
 
-        mov     eax,    pml4 - $$ + 0x20000 
+        mov     eax,    pml4 - $$ + 0x00020000 
         mov     cr3,    eax
 
         mov     eax,    cr4
@@ -57,7 +57,7 @@ enter_protected_mode:
 enter_long_mode:
         bits    64
 
-        mov     ax,     0x10
+        mov     ax,     0x0010
         mov     ds,     ax
         mov     es,     ax
         mov     ss,     ax
@@ -66,7 +66,7 @@ elf_loader:
         mov     rsi,    [0x00020000 + kernel + 0x20]
         add     rsi,    0x00020000 + kernel
         
-        movzx   ecx,    word [0x20000 + kernel + 0x38]
+        movzx   ecx,    word [0x00020000 + kernel + 0x38]
 
         cld
 
@@ -78,10 +78,10 @@ elf_loader:
         cmp     eax,    1       ; If it's not PT_LOAD, ignore.
         jne     .next
         
-        mov     r8,     [rsi + 8] ; p_offset
-        mov     r9,     [rsi + 0x10] ; p_vaddr
-        mov     r10,    [rsi + 0x20] ; p_filesz
-        mov     r11,    [rsi + 0x28] ; p_memsz
+        mov     r8,     [rsi + 0x00000008]      ; p_offset
+        mov     r9,     [rsi + 0x00000010]      ; p_vaddr
+        mov     r10,    [rsi + 0x00000020]      ; p_filesz
+        mov     r11,    [rsi + 0x00000028]      ; p_memsz
 
         test    r14,    r14
         jnz     .skip
@@ -108,7 +108,7 @@ elf_loader:
         mov     rcx,    r15
         mov     rsi,    rbp
 .next:
-        add     rsi, 0x38
+        add     rsi,    0x00000038
         loop    .ph_loop
 
         ; Fix stack.

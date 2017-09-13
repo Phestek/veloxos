@@ -1,6 +1,7 @@
 #! /usr/bin/env python2
 
 from copy import *
+import fnmatch
 import os
 import subprocess
 
@@ -67,7 +68,13 @@ cxx = [
 env = Environment(asm, cxx)
 env.add_object('asm', ['source/bootloader/stage1.asm'], 'build/stage1')
 env.add_object('asm', ['source/bootloader/stage2.asm'], 'build/stage2')
-env.add_object('cxx', ['source/kernel.cxx', 'source/terminal/terminal.cxx'], 'build/kernel')
+
+# TODO: This is bad.
+cxx_sources = []
+for root, dirnames, filenames in os.walk('source'):
+    for filename in fnmatch.filter(filenames, '*.cxx'):
+        cxx_sources.append(os.path.join(root, filename))
+env.add_object('cxx', cxx_sources, 'build/kernel')
 
 env.fix_stage1_size()
 
