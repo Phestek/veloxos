@@ -11,6 +11,7 @@ class Environment:
         self.objects = []
 
     def add_object(self, lang, source_files, output_file):
+        print "Building:\t" + output_file
         self.objects.append(output_file)
         if lang == 'asm':
             cmd = copy(self.asm)
@@ -19,10 +20,16 @@ class Environment:
             subprocess.call(cmd)
             return
         if lang == 'cxx':
+            cmd = copy(self.cxx)
+            cmd.extend(source_files)
+            cmd.extend(['-o', output_file])
+            subprocess.call(cmd)
+            subprocess.call(['strip', output_file])
             return
         raise Exception('Unknown language.')
 
     def fix_stage1_size(self):
+        # TODO: kernel should be loaded by stage2.
         image_size_in_segments = 0
         for i in range(1, len(self.objects)):   # 1st (index 0) object is always stage1.
             image_size_in_segments += os.stat(self.objects[i]).st_size
@@ -37,6 +44,7 @@ class Environment:
             f.write(d)
 
     def write_to_image(self, image_name):
+        print "Writing to:\t" + image_name
         image = []
         for obj in self.objects:
             with open(obj, 'rb') as f:
@@ -52,13 +60,14 @@ class Environment:
 
 asm = [ 'nasm', '-f', 'bin' ]
 cxx = [
-        'g++', '-std=c++17', '-Wall', '-Wextra', '-Wpedantic', '-nostdlib', '-nostandardlibs', '-nostartfiles',
-        '-march=x86_64'
+        'g++', '-std=c++17', '-Wall', '-Wextra', '-Wpedantic', '-O0', '-nostdlib', '-nostartfiles', '-march=x86-64',
+        '-fomit-frame-pointer', '-fno-builtin'
 ]
 
 env = Environment(asm, cxx)
 env.add_object('asm', ['source/bootloader/stage1.asm'], 'build/stage1')
 env.add_object('asm', ['source/bootloader/stage2.asm'], 'build/stage2')
+env.add_object('cxx', ['source/kernel.cxx'], 'build/kernel')
 
 env.fix_stage1_size()
 

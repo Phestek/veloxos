@@ -1,5 +1,3 @@
-bits    16
-
 stage2_enable_a20:
         ; Check if A20 is enabled. If not, unlock it.
         call    .check_a20

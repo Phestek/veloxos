@@ -1,61 +1,125 @@
-bits    16
-org     0x0000
+[bits 16]
+[org 0x0000]
 
 start:
-        mov     ax,     0x07E0
+        call    stage2_enable_a20
+
+        mov     ax,     0x2000
         mov     ds,     ax
         mov     es,     ax
 
-        mov     ax,     0x07BF
+        mov     ax,     0x1F00
         mov     ss,     ax
         xor     sp,     sp
 
-        call    stage2_enable_a20
-
         cli
+
         lgdt    [gdt32_descriptor]
+
         mov     eax,    cr0
         or      eax,    1
         mov     cr0,    eax
 
-        jmp     dword   0x0008:(0x7E00 + enter_protected_mode)
+        jmp     dword   0x0008:(0x20000 + enter_protected_mode)
 
-%include        "source/bootloader/stage2_enable_a20.asm"
+%include "source/bootloader/stage2_enable_a20.asm"
+%include "source/bootloader/stage2_gdt.asm"
 
 enter_protected_mode:
         bits    32
-        
+
         mov     ax,     0x10
         mov     ds,     ax
         mov     es,     ax
         mov     ss,     ax
-        lea     eax,    [0xb8000]
-        mov     dword   [eax],  0x9F4B9F4F
 
-        jmp     $
+        mov     eax,    pml4 - $$ + 0x20000 
+        mov     cr3,    eax
+
+        mov     eax,    cr4
+        or      eax,    1 << 5
+        mov     cr4,    eax
+
+        mov     ecx,    0xC0000080      ; EFER
+        rdmsr
+        or      eax,    1 << 8
+        wrmsr
+
+        mov     eax,    cr0
+        or      eax,    1 << 31
+        mov     cr0,    eax
+
+        lgdt    [gdt64_descriptor + 0x00020000]
+        jmp     dword   0x0008:(0x00020000 + enter_long_mode)
+
+%include "source/bootloader/stage2_paging.asm"
 
 enter_long_mode:
         bits    64
-        jmp     $
 
-gdt32_descriptor:
-        dw      gdt32_end - gdt32_begin - 1
-        dd      0x7E00 + gdt32_begin
+        mov     ax,     0x10
+        mov     ds,     ax
+        mov     es,     ax
+        mov     ss,     ax
 
-align 0x04
+elf_loader:
+        mov     rsi,    [0x00020000 + kernel + 0x20]
+        add     rsi,    0x00020000 + kernel
+        
+        movzx   ecx,    word [0x20000 + kernel + 0x38]
 
-gdt32_begin:
-        ; Null segment.
-        dd      0x0000
-        dd      0x0000
-        ; Code segment.
-        dd      0xFFFF
-        dd      (10 << 8) | (1 << 12) | (1 << 15) | (0xf << 16) | (1 << 22) | (1 << 23)
-        ; Data segment.
-        dd 0xFFFF
-        dd      (2 << 8) | (1 << 12) | (1 << 15) | (0xf << 16) | (1 << 22) | (1 << 23)
-        ; Null segment.
-        dd      0x0000
-        dd      0x0000
-gdt32_end:
+        cld
+
+        ; Assumes that the linker always stores ELF header at first p_vaddr.
+        xor     r14,    r14     ; First PT_LOAD p_vaddr.
+
+.ph_loop:
+        mov     eax,    [rsi + 0]
+        cmp     eax,    1       ; If it's not PT_LOAD, ignore.
+        jne     .next
+        
+        mov     r8,     [rsi + 8] ; p_offset
+        mov     r9,     [rsi + 0x10] ; p_vaddr
+        mov     r10,    [rsi + 0x20] ; p_filesz
+        mov     r11,    [rsi + 0x28] ; p_memsz
+
+        test    r14,    r14
+        jnz     .skip
+        mov     r14,    r9
+
+.skip:
+        ; Backup.
+        mov     rbp,    rsi
+        mov     r15,    rcx
+
+        ; Zero memory.
+        mov     rdi,    r9
+        mov     rcx,    r11
+        xor     al,     al
+        rep     stosb
+
+        ; Copy segment.
+        lea     rsi,    [0x00020000 + kernel + r8d]
+        mov     rdi,    r9
+        mov     rcx,    r10
+        rep     movsb
+
+        ; Restore.
+        mov     rcx,    r15
+        mov     rsi,    rbp
+.next:
+        add     rsi, 0x38
+        loop    .ph_loop
+
+        ; Fix stack.
+        mov     rsp,    0x0030F000
+
+        ; Jump to EP
+        mov     rdi,    r14
+        mov     rax,    [0x00020000 + kernel + 0x18]
+        call    rax
+
+align 0x200
+
+kernel:
 
