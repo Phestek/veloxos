@@ -61,13 +61,13 @@ class Environment:
 asm = [ 'nasm', '-f', 'bin' ]
 cxx = [
         'g++', '-std=c++17', '-Wall', '-Wextra', '-Wpedantic', '-O0', '-nostdlib', '-nostartfiles', '-march=x86-64',
-        '-fomit-frame-pointer', '-fno-builtin'
+        '-fomit-frame-pointer', '-fno-builtin', '-Isource'
 ]
 
 env = Environment(asm, cxx)
 env.add_object('asm', ['source/bootloader/stage1.asm'], 'build/stage1')
 env.add_object('asm', ['source/bootloader/stage2.asm'], 'build/stage2')
-env.add_object('cxx', ['source/kernel.cxx'], 'build/kernel')
+env.add_object('cxx', ['source/kernel.cxx', 'source/terminal/terminal.cxx'], 'build/kernel')
 
 env.fix_stage1_size()
 

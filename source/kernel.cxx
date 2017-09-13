@@ -1,17 +1,18 @@
-using uint8  = unsigned char;
-using uint16 = unsigned short;
-using uint32 = unsigned int;
-using uint64 = unsigned long;
-
-using int8   = char;
-using int16  = short;
-using int32  = int;
-using int64  = long;
+#include "terminal/terminal.hxx"
 
 extern "C" void _start() {
-    auto vram = reinterpret_cast<uint16*>(0xB8000);
-    // Print 'KERNEL'.
-    vram[0] = 0x9F4B; vram[1] = 0x9F45; vram[2] = 0x9F52; vram[3] = 0x9F4E; vram[4] = 0x9F45; vram[5] = 0x9F4C;
+    velox::Terminal terminal{80, 25};
+    terminal.set_background_color(velox::Bios_Color::LIGHT_BLUE);
+    terminal.set_foreground_color(velox::Bios_Color::WHITE);
+    terminal.clear();
+    terminal.print("VeloxOS v0.0.1");
+    terminal.set_cursor_position(30, 12);
+    terminal.print("Centered text test.");
+    terminal.set_cursor_position(0, 1);
+    terminal.print("qwer\ta\t\tasdf\nnot displayed\rthis is displayed\n");
+    terminal.print("outofboundstestoutofboundstestoutofboundstestoutofboundstestoutofboundstestoutofboundstest\n");
+    terminal.print("Hope this isn't broken.");
+
     while(true) {
     }
 }
