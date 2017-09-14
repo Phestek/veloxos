@@ -62,7 +62,7 @@ class Environment:
 asm = [ 'nasm', '-f', 'bin' ]
 cxx = [
         'g++', '-std=c++17', '-Wall', '-Wextra', '-Wpedantic', '-O0', '-nostdlib', '-nostartfiles', '-masm=intel',
-        '-march=x86-64', '-fomit-frame-pointer', '-fno-builtin', '-Isource'
+        '-march=x86-64', '-fomit-frame-pointer', '-fno-builtin', '-Isource/kernel'
 ]
 
 env = Environment(asm, cxx)
@@ -71,7 +71,7 @@ env.add_object('asm', ['source/bootloader/stage2.asm'], 'build/stage2')
 
 # TODO: This is bad.
 cxx_sources = []
-for root, dirnames, filenames in os.walk('source'):
+for root, dirnames, filenames in os.walk('source/kernel/'):
     for filename in fnmatch.filter(filenames, '*.cxx'):
         cxx_sources.append(os.path.join(root, filename))
 env.add_object('cxx', cxx_sources, 'build/kernel')

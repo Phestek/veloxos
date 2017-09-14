@@ -6,7 +6,6 @@ extern "C" void _start() {
     terminal.set_foreground_color(velox::Bios_Color::WHITE);
     terminal.clear();
     terminal.print("VeloxOS v0.0.1\n");
-
     while(true) {
     }
 }
