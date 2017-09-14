@@ -1,5 +1,4 @@
-#ifndef VELOXOS_UTILS_INTEGER_H
-#define VELOXOS_UTILS_INTEGER_H
+#pragma once
 
 namespace velox {
 
@@ -16,6 +15,4 @@ namespace velox {
     using int64  = long;
 
 }
-
-#endif //VELOXOS_UTILS_INTEGER_H
 

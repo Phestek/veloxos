@@ -5,13 +5,7 @@ extern "C" void _start() {
     terminal.set_background_color(velox::Bios_Color::LIGHT_BLUE);
     terminal.set_foreground_color(velox::Bios_Color::WHITE);
     terminal.clear();
-    terminal.print("VeloxOS v0.0.1");
-    terminal.set_cursor_position(30, 12);
-    terminal.print("Centered text test.");
-    terminal.set_cursor_position(0, 1);
-    terminal.print("qwer\ta\t\tasdf\nnot displayed\rthis is displayed\n");
-    terminal.print("outofboundstestoutofboundstestoutofboundstestoutofboundstestoutofboundstestoutofboundstest\n");
-    terminal.print("Hope this isn't broken.");
+    terminal.print("VeloxOS v0.0.1\n");
 
     while(true) {
     }

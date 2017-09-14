@@ -61,8 +61,8 @@ class Environment:
 
 asm = [ 'nasm', '-f', 'bin' ]
 cxx = [
-        'g++', '-std=c++17', '-Wall', '-Wextra', '-Wpedantic', '-O0', '-nostdlib', '-nostartfiles', '-march=x86-64',
-        '-fomit-frame-pointer', '-fno-builtin', '-Isource'
+        'g++', '-std=c++17', '-Wall', '-Wextra', '-Wpedantic', '-O0', '-nostdlib', '-nostartfiles', '-masm=intel',
+        '-march=x86-64', '-fomit-frame-pointer', '-fno-builtin', '-Isource'
 ]
 
 env = Environment(asm, cxx)

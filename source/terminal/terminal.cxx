@@ -1,5 +1,7 @@
 #include "terminal.hxx"
 
+#include "hal/ports.hxx"
+
 namespace velox {
 
     Terminal::Terminal(const uint16 width, const uint16 height) noexcept
@@ -13,6 +15,11 @@ namespace velox {
     void Terminal::set_cursor_position(const uint16 x, const uint16 y) noexcept {
         _cursor_x = x;
         _cursor_y = y;
+        const auto offset = x + y * _width;
+        port_out_byte(0x03D4, 0x0F);    // TODO: Get rid of magic numbers.
+        port_out_byte(0x03D5, offset & 0xFF);
+        port_out_byte(0x03D4, 0x0E);
+        port_out_byte(0x03D5, offset >> 8);
     }
 
     void Terminal::set_foreground_color(const Bios_Color color) noexcept {
@@ -31,26 +38,24 @@ namespace velox {
     void Terminal::print(const char c) noexcept {
         switch(c) {
             case '\n': {
-                _cursor_x = 0;
-                ++_cursor_y;
+                set_cursor_position(0, ++_cursor_y);
                 break;
             }
             case '\r': {
-                _cursor_x = 0;
+                set_cursor_position(0, _cursor_y);
                 break;
             }
             case '\t': {
-                _cursor_x += 8 - _cursor_x % 8;
+                set_cursor_position(_cursor_x + (8 - _cursor_x % 8), _cursor_y);
                 break;
             }
             default: {
                 _video_ram[_cursor_x + _cursor_y * _width] = (_color << 8) | c;
-                ++_cursor_x;
+                set_cursor_position(++_cursor_x, _cursor_y);
             }
         }
         if(_cursor_x >= _width) {
-            ++_cursor_y;
-            _cursor_x = 0;
+            set_cursor_position(0, ++_cursor_y);
         }
     }
 

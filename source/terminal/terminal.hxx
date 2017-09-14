@@ -1,5 +1,4 @@
-#ifndef VELOXOS_TERMINAL_TERMINAL_H
-#define VELOXOS_TERMINAL_TERMINAL_H
+#pragma once
 
 #include "utils/integer.hxx"
 
@@ -28,6 +27,11 @@ namespace velox {
     public:
         Terminal(const uint16 width, const uint16 height) noexcept;
 
+        Terminal(const Terminal&) = delete;
+        Terminal(Terminal&&) = delete;
+        Terminal& operator=(const Terminal&) = delete;
+        Terminal& operator=(Terminal&&) = delete;
+
         void set_background_color(const Bios_Color color) noexcept;
         void set_foreground_color(const Bios_Color color) noexcept;
 
@@ -50,6 +54,4 @@ namespace velox {
     };
 
 }
-
-#endif //VELOXOS_TERMINAL_TERMINAL_H
 
