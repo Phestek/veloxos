@@ -78,24 +78,33 @@ namespace velox {
     }
 
     void Terminal::print_int(int64 integer) noexcept {
+        if(integer == 0) {
+            print_char('0');
+            return;
+        }
         if(integer < 0) {
             print_char('-');
+            integer = -integer;
         }
         const uint max_int64_length{19};
         char number_as_string[max_int64_length]{'\0'};
-        std::size_t len{};
+        std::size_t length{};
         while(integer != 0) {
-            number_as_string[len] = integer % 10 + '0';
+            number_as_string[length] = integer % 10 + '0';
             integer /= 10;
-            ++len;
+            ++length;
         }
         // The 'number_as_string' is reversed, so we have to print it back-to-front.
-        while(len--) {
-            print_char(number_as_string[len]);
+        while(length--) {
+            print_char(number_as_string[length]);
         }
     }
 
     void Terminal::print_uint(uint64 integer) noexcept {
+        if(integer == 0) {
+            print_char('0');
+            return;
+        }
         const uint max_uint64_length{20};
         char number_as_string[max_uint64_length]{'\0'};
         std::size_t length{};
@@ -140,7 +149,7 @@ namespace velox {
                 case 'd':
                 case 'i': {
                     ++text;
-                    print_int(va_arg(args, int64));
+                    print_int(va_arg(args, int));
                     continue;
                 }
                 case 'u': {
