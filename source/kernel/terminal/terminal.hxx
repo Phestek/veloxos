@@ -34,15 +34,21 @@ namespace velox {
 
         void set_background_color(const Bios_Color color) noexcept;
         void set_foreground_color(const Bios_Color color) noexcept;
+        void set_color(const uint16 color) noexcept;
+        uint16 get_color() const noexcept;
 
         void set_cursor_position(const uint16 x, const uint16 y) noexcept;
 
         void clear() noexcept;
 
-        void print(const char c) noexcept;
-        void print(const char* s) noexcept;
+        void print(const char* fmt, ...) noexcept;
 
     private:
+        void print_char(const char c) noexcept;
+        void print_string(const char* s) noexcept;
+        void print_int(int64 integer) noexcept;
+        void print_uint(uint64 integer) noexcept;
+
         const uint16 _width;
         const uint16 _height;
 
@@ -54,4 +60,3 @@ namespace velox {
     };
 
 }
-

@@ -1,5 +1,9 @@
 #include "terminal.hxx"
 
+#include <cstdarg>
+
+#include <cstring.hxx>
+
 #include "hal/ports.hxx"
 
 namespace velox {
@@ -26,16 +30,23 @@ namespace velox {
         _color = (_color & 0xF0) | (static_cast<uint8>(color) & 0x0F);
     }
 
+    void Terminal::set_color(const uint16 color) noexcept {
+        _color = color;
+    }
+
+    uint16 Terminal::get_color() const noexcept {
+        return _color;
+    }
+
     void Terminal::clear() noexcept {
         const auto clear_char = (_color << 8) | ' ';
         for(uint i = 0; i < static_cast<uint>(_width * _height); ++i) {
             _video_ram[i] = clear_char;
         }
-        _cursor_x = 0;
-        _cursor_y = 0;
+        set_cursor_position(0, 0);
     }
 
-    void Terminal::print(const char c) noexcept {
+    void Terminal::print_char(const char c) noexcept {
         switch(c) {
             case '\n': {
                 set_cursor_position(0, ++_cursor_y);
@@ -59,12 +70,90 @@ namespace velox {
         }
     }
 
-    void Terminal::print(const char* s) noexcept {
+    void Terminal::print_string(const char* s) noexcept {
         while(*s != '\0') {
-            print(*s);
+            print_char(*s);
             ++s;
         }
     }
 
-}
+    void Terminal::print_int(int64 integer) noexcept {
+        if(integer < 0) {
+            print_char('-');
+        }
+        const uint max_int64_length{19};
+        char number_as_string[max_int64_length]{'\0'};
+        std::size_t len{};
+        while(integer != 0) {
+            number_as_string[len] = integer % 10 + '0';
+            integer /= 10;
+            ++len;
+        }
+        // The 'number_as_string' is reversed, so we have to print it back-to-front.
+        while(len--) {
+            print_char(number_as_string[len]);
+        }
+    }
 
+    void Terminal::print_uint(uint64 integer) noexcept {
+        const uint max_uint64_length{20};
+        char number_as_string[max_uint64_length]{'\0'};
+        std::size_t length{};
+        while(integer != 0) {
+            number_as_string[length] = integer % 10 + '0';
+            integer /= 10;
+            ++length;
+        }
+        // The 'number_as_string' is reversed, so we have to print it back-to-front.
+        while(length--) {
+            print_char(number_as_string[length]);
+        }
+    }
+
+    void Terminal::print(const char* fmt, ...) noexcept {
+        va_list args{};
+        va_start(args, fmt);
+        const char* text = fmt;
+        while(*text != '\0') {
+            if(*text != '%') {
+                print_char(*text);
+                ++text;
+                continue;
+            }
+            ++text;
+            switch(*text) {
+                case '%': {
+                    print_char('%');
+                    ++text;
+                    continue;
+                }
+                case 'c': {
+                    ++text;
+                    print_char(va_arg(args, int));  // Char instead of int, because of C++'s implicit promotions.
+                    continue;
+                }
+                case 's': {
+                    ++text;
+                    print_string(va_arg(args, const char*));
+                    continue;
+                }
+                case 'd':
+                case 'i': {
+                    ++text;
+                    print_int(va_arg(args, int64));
+                    continue;
+                }
+                case 'u': {
+                    ++text;
+                    print_uint(va_arg(args, uint64));
+                    continue;
+                }
+                default: {
+                    ++text;
+                }
+            }
+        }
+        va_end(args);
+    }
+
+}
