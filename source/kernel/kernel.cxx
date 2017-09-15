@@ -5,7 +5,7 @@ extern "C" void _start() {
     terminal.set_background_color(velox::Bios_Color::LIGHT_BLUE);
     terminal.set_foreground_color(velox::Bios_Color::WHITE);
     terminal.clear();
-    terminal.print("VeloxOS - build 0010\n");
+    terminal.print("VeloxOS - build 0011\n");
 
     terminal.print("Percent test:  \t%%\n");
     terminal.print("Character test:\t%c\n", 'c');
