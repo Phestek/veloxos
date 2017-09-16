@@ -8,7 +8,8 @@ sys.path.append(os.path.abspath("./scripts"))
 from environment import Environment
 
 asm = [ 'nasm', '-f', 'bin' ]
-cxx = [ 'g++', '-std=c++17', '-Wall', '-Wextra', '-Wpedantic', '-O0', '-nostdlib', '-nostartfiles', '-masm=intel',
+cxx = [ 'g++', '-std=c++17', '-Wall', '-Wextra', '-Wpedantic', '-Wnull-dereference', '-Wold-style-cast', '-O0',
+        '-Wuseless-cast', '-Wshadow', '-nostdlib', '-nostartfiles', '-masm=intel',
         '-march=x86-64', '-fomit-frame-pointer', '-fno-builtin', '-fno-stack-protector', '-nostdinc', '-nostdinc++', 
         '-Isource/kernel', '-Isource/libcxx'
 ]
