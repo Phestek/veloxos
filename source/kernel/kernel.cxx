@@ -5,7 +5,7 @@ extern "C" void _start() {
     terminal.set_background_color(velox::Bios_Color::LIGHT_BLUE)
             .set_foreground_color(velox::Bios_Color::WHITE)
             .clear()
-            .print("VeloxOS - build 0012\n");
+            .print("VeloxOS - build 0013\n");
     while(true) {
     }
 }

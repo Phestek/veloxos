@@ -10,7 +10,7 @@ from environment import Environment
 asm = [ 'nasm', '-f', 'bin' ]
 cxx = [
         'g++', '-std=c++17', '-Wall', '-Wextra', '-Wpedantic', '-O0', '-nostdlib', '-nostartfiles', '-masm=intel',
-        '-march=x86-64', '-fomit-frame-pointer', '-fno-builtin', '-fno-stack-protector',
+        '-march=x86-64', '-fomit-frame-pointer', '-fno-builtin', '-fno-stack-protector', '-nostdinc', '-nostdinc++', 
         '-Isource/kernel', '-Isource/libcxx'
 ]
 

@@ -1,7 +1,6 @@
 #include "terminal.hxx"
 
-#include <cstdarg>
-
+#include <cstdarg.hxx>
 #include <cstring.hxx>
 
 #include "hal/ports.hxx"
@@ -50,7 +49,7 @@ namespace velox {
         set_cursor_position(0, 0);
         return *this;
     }
-    
+
     Terminal& Terminal::print(const char* fmt, ...) noexcept {
         va_list args{};
         va_start(args, fmt);
