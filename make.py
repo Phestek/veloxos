@@ -8,8 +8,7 @@ sys.path.append(os.path.abspath("./scripts"))
 from environment import Environment
 
 asm = [ 'nasm', '-f', 'bin' ]
-cxx = [
-        'g++', '-std=c++17', '-Wall', '-Wextra', '-Wpedantic', '-O0', '-nostdlib', '-nostartfiles', '-masm=intel',
+cxx = [ 'g++', '-std=c++17', '-Wall', '-Wextra', '-Wpedantic', '-O0', '-nostdlib', '-nostartfiles', '-masm=intel',
         '-march=x86-64', '-fomit-frame-pointer', '-fno-builtin', '-fno-stack-protector', '-nostdinc', '-nostdinc++', 
         '-Isource/kernel', '-Isource/libcxx'
 ]
@@ -18,14 +17,18 @@ env = Environment(asm, cxx)
 env.add_object('asm', ['source/bootloader/stage1.asm'], 'build/stage1')
 env.add_object('asm', ['source/bootloader/stage2.asm'], 'build/stage2')
 
-# TODO: This is bad.
+# TODO: Globbing is bad.
 cxx_sources = []
 for root, dirnames, filenames in os.walk('source/kernel/'):
     for filename in fnmatch.filter(filenames, '*.cxx'):
         cxx_sources.append(os.path.join(root, filename))
-# TODO: libcxx in compiled to kernel, instead being separate library.
+# TODO: libcxx in compiled to kernel, instead being a separate library.
 for root, dirnames, filenames in os.walk('source/libcxx/'):
     for filename in fnmatch.filter(filenames, '*.cxx'):
+        cxx_sources.append(os.path.join(root, filename))
+# TODO: Not the cleanest way of doing things, but whatever.
+for root, dirnames, filenames in os.walk('source/kernel/idt/'):
+    for filename in fnmatch.filter(filenames, '*.s'):
         cxx_sources.append(os.path.join(root, filename))
 env.add_object('cxx', cxx_sources, 'build/kernel')
 
