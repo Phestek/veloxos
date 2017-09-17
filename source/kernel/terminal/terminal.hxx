@@ -32,12 +32,17 @@ namespace velox {
         Terminal& operator=(const Terminal&) = delete;
         Terminal& operator=(Terminal&&) = delete;
 
+        uint16 width() const noexcept;
+        uint16 height() const noexcept;
+
         Terminal& set_background_color(const Bios_Color color) noexcept;
         Terminal& set_foreground_color(const Bios_Color color) noexcept;
         Terminal& set_color(const uint16 color) noexcept;
         uint16 get_color() const noexcept;
 
         Terminal& set_cursor_position(const uint16 x, const uint16 y) noexcept;
+        uint16 cursor_x() const noexcept;
+        uint16 cursor_y() const noexcept;
 
         Terminal& clear() noexcept;
 

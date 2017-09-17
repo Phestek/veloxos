@@ -1,3 +1,4 @@
+#include "hal/ports.hxx"
 #include "idt/interrupt_descriptor_table.hxx"
 #include "terminal/terminal.hxx"
 
@@ -10,9 +11,7 @@ namespace velox {
         terminal.set_background_color(velox::Bios_Color::LIGHT_BLUE)
                 .set_foreground_color(velox::Bios_Color::WHITE)
                 .clear()
-                .print("VeloxOS - build 0015\n");
-
-        [[maybe_unused]] const auto z = 1 / 0;
+                .print("VeloxOS - build 0019\n");
 
         while(true) {
         }

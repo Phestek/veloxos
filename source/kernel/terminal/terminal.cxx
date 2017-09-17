@@ -11,6 +11,14 @@ namespace velox {
             : _width{width}, _height{height} {
     }
 
+    uint16 Terminal::width() const noexcept {
+        return _width;
+    }
+
+    uint16 Terminal::height() const noexcept {
+        return _height;
+    }
+
     Terminal& Terminal::set_background_color(const Bios_Color color) noexcept {
         _color = static_cast<uint8>(color) << 4 | (_color & 0x0F);
         return *this;
@@ -25,6 +33,14 @@ namespace velox {
         port_out_byte(0x03D4, 0x0E);
         port_out_byte(0x03D5, offset >> 8);
         return *this;
+    }
+
+    uint16 Terminal::cursor_x() const noexcept {
+        return _cursor_x;
+    }
+
+    uint16 Terminal::cursor_y() const noexcept {
+        return _cursor_y;
     }
 
     Terminal& Terminal::set_foreground_color(const Bios_Color color) noexcept {
