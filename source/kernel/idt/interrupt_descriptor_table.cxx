@@ -1,5 +1,7 @@
 #include "interrupt_descriptor_table.hxx"
 
+#include "idt/interrupt_handlers.hxx"
+
 #define VELOX_IDT_FLAGS(ist, type, dpl, p) (static_cast<uint16>(ist | (type << 8) | (dpl << 13) | (p << 15)))
 
 #define VELOX_IDT_OFFSET_LOW(func)  (static_cast<uint16>(reinterpret_cast<uint64>(func) & 0xFFFF))
@@ -14,6 +16,8 @@
         entry.base_high        = VELOX_IDT_OFFSET_HIGH(func); \
     }
 
+extern "C" void int_00_division_error_wrapper();
+
 namespace velox {
 
     namespace {
@@ -25,11 +29,8 @@ namespace velox {
 
     }
 
-    void Interrupt_Descriptor_Table::register_interrupt_handler(const uint8 int_number, Interrupt_Handler handler) {
-        VELOX_IDT_ENTRY(_entries[int_number], handler, 0);
-    }
-
-    void Interrupt_Descriptor_Table::set_idtr() {
+    Interrupt_Descriptor_Table::Interrupt_Descriptor_Table() noexcept {
+        VELOX_IDT_ENTRY(_entries[0x00], int_00_division_error_wrapper, 0x00);
         Idt_Ptr ptr{256 * 16 - 1, reinterpret_cast<uint64>(&_entries)};
         asm("lidt %0" :: "m"(ptr));
     }

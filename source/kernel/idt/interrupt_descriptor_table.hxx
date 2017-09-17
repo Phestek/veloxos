@@ -5,8 +5,6 @@
 
 namespace velox {
 
-    using Interrupt_Handler = void();
-
     struct Idt_Entry {
         uint16 base_low{};
         uint16 segment_selector{};
@@ -18,8 +16,7 @@ namespace velox {
 
     class Interrupt_Descriptor_Table {
     public:
-        void register_interrupt_handler(const uint8 int_number, Interrupt_Handler handler);
-        void set_idtr();
+        Interrupt_Descriptor_Table() noexcept;
 
     private:
         Idt_Entry _entries[256]{Idt_Entry{}};
