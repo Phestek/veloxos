@@ -186,4 +186,64 @@ namespace velox {
         }
     }
 
+    Terminal& Terminal::operator<<(const char value) {
+        print_char(value);
+        return *this;
+    }
+
+    Terminal& Terminal::operator<<(const unsigned char value) {
+        print_char(value);
+        return *this;
+    }
+
+    Terminal& Terminal::operator<<(const short value) {
+        print_int(value);
+        return *this;
+    }
+
+    Terminal& Terminal::operator<<(const unsigned short value) {
+        print_uint(value);
+        return *this;
+    }
+
+    Terminal& Terminal::operator<<(const int value) {
+        print_int(value);
+        return *this;
+    }
+
+    Terminal& Terminal::operator<<(const unsigned int value) {
+        print_uint(value);
+        return *this;
+    }
+
+    Terminal& Terminal::operator<<(const long value) {
+        print_int(value);
+        return *this;
+    }
+
+    Terminal& Terminal::operator<<(const unsigned long value) {
+        print_uint(value);
+        return *this;
+    }
+
+    Terminal& Terminal::operator<<(const long long value) {
+        print_int(value);
+        return *this;
+    }
+
+    Terminal& Terminal::operator<<(const unsigned long long value) {
+        print_uint(value);
+        return *this;
+    }
+
+    Terminal& Terminal::operator<<(const bool value) {
+        print_uint(value);
+        return *this;
+    }
+
+    Terminal& Terminal::operator<<(const char* string) {
+        print_string(string);
+        return *this;
+    }
+
 }

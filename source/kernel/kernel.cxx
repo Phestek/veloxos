@@ -11,7 +11,13 @@ namespace velox {
         terminal.set_background_color(velox::Bios_Color::LIGHT_BLUE)
                 .set_foreground_color(velox::Bios_Color::WHITE)
                 .clear()
-                .print("VeloxOS - build 0019\n");
+                << "VeloxOS build 0020\n"
+                << "String test.\n"
+                << static_cast<short>(42) << '\n'
+                << 42 << '\n'
+                << 42L << '\n'
+                << 42LL << '\n'
+                << true << '\n';
 
         while(true) {
         }

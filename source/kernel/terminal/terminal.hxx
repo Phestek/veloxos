@@ -23,6 +23,7 @@ namespace velox {
         WHITE
     };
 
+    // TODO: Should inherit from 'std::basic_ostream' / 'std::basic_ios' / 'std::ios_base'.
     class Terminal {
     public:
         Terminal(const uint16 width, const uint16 height) noexcept;
@@ -47,6 +48,19 @@ namespace velox {
         Terminal& clear() noexcept;
 
         Terminal& print(const char* fmt, ...) noexcept;
+
+        Terminal& operator<<(const char value);
+        Terminal& operator<<(const unsigned char value);
+        Terminal& operator<<(const short value);
+        Terminal& operator<<(const unsigned short value);
+        Terminal& operator<<(const int value);
+        Terminal& operator<<(const unsigned int value);
+        Terminal& operator<<(const long value);
+        Terminal& operator<<(const unsigned long value);
+        Terminal& operator<<(const long long value);
+        Terminal& operator<<(const unsigned long long value);
+        Terminal& operator<<(const bool value);
+        Terminal& operator<<(const char* string);
 
     private:
         void print_char(const char c) noexcept;
