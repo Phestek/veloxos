@@ -33,7 +33,7 @@ enter_protected_mode:
         mov     es,     ax
         mov     ss,     ax
 
-        mov     eax,    pml4 - $$ + 0x00020000 
+        mov     eax,    pml4 - $$ + 0x00020000
         mov     cr3,    eax
 
         mov     eax,    cr4
@@ -65,7 +65,7 @@ enter_long_mode:
 elf_loader:
         mov     rsi,    [0x00020000 + kernel + 0x20]
         add     rsi,    0x00020000 + kernel
-        
+
         movzx   ecx,    word [0x00020000 + kernel + 0x38]
 
         cld
@@ -77,7 +77,7 @@ elf_loader:
         mov     eax,    [rsi + 0]
         cmp     eax,    1       ; If it's not PT_LOAD, ignore.
         jne     .next
-        
+
         mov     r8,     [rsi + 0x00000008]      ; p_offset
         mov     r9,     [rsi + 0x00000010]      ; p_vaddr
         mov     r10,    [rsi + 0x00000020]      ; p_filesz
@@ -108,7 +108,7 @@ elf_loader:
         mov     rcx,    r15
         mov     rsi,    rbp
 .next:
-        add     rsi,    0x00000038
+        add     rsi,    0x38
         loop    .ph_loop
 
         ; Fix stack.
@@ -119,7 +119,6 @@ elf_loader:
         mov     rax,    [0x00020000 + kernel + 0x18]
         call    rax
 
-align 0x200
+align 0x0200
 
 kernel:
-

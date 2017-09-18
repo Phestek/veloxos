@@ -14,8 +14,9 @@ pdpt:
 
 ; Page Directory Table.
 pdt:
+        ; This code maps first 4GB or RAM in flat mode.
         %assign i       0
-        %rep    512
+        %rep    0x0800
                 dq      0x200000 * i + 0x83
         %assign i       i + 1
         %endrep
