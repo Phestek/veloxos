@@ -25,5 +25,5 @@ include libcxx/Makefile
 
 all: bootloader kernel libcxx
 	python2 scripts/fix_stage1_loaded_size.py
+	echo Writing to image: $(IMAGE_NAME)
 	cat $(BUILD_DIR)/bootloader/stage1.o $(BUILD_DIR)/bootloader/stage2.o $(BUILD_DIR)/kernel.o > $(BUILD_DIR)/$(IMAGE_NAME)
-	echo "EVERYTHING BUILT SUCCESSFULLY!"
