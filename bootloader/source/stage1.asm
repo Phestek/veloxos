@@ -35,7 +35,7 @@ start:
 disk_address_packet:
         db      0x10        ; Size of the packet.
         db      0x00        ; Something with 'reserve' - should always be 0x00.
-        dw      0xEFBE      ; Number of segments to load - will be set by a build script.
+        dw      0xCCCC      ; Number of segments to load - will be set by a build script.
         ; Address to load rest of the system.
         dw      0x0000      ; Offset.
         dw      0x2000      ; Segment.

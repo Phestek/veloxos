@@ -22,8 +22,8 @@ start:
 
         jmp     dword   0x00000008:(0x00020000 + enter_protected_mode)
 
-%include "source/bootloader/stage2_enable_a20.asm"
-%include "source/bootloader/stage2_gdt.asm"
+%include "bootloader/source/stage2_enable_a20.asm"
+%include "bootloader/source/stage2_gdt.asm"
 
 enter_protected_mode:
         bits    32
@@ -52,7 +52,7 @@ enter_protected_mode:
         lgdt    [gdt64_descriptor + 0x00020000]
         jmp     dword   0x0008:(0x00020000 + enter_long_mode)
 
-%include "source/bootloader/stage2_paging.asm"
+%include "bootloader/source/stage2_paging.asm"
 
 enter_long_mode:
         bits    64
