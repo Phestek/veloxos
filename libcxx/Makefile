@@ -1,7 +1,6 @@
 LIBCXX_CXX_FLAGS := -Ilibcxx/include
 
 LIBCXX_SOURCES := $(shell find libcxx/source -name '*.cxx' -type f)
-LIBCXX_SOURCES += $(shell find libcxx/source -name '*.s'   -type f)
 
 LIBCXX_OBJECTS := $(patsubst libcxx/source/%,$(BUILD_DIR)/libcxx/%,$(LIBCXX_SOURCES))
 LIBCXX_OBJECTS := $(addsuffix .o,$(LIBCXX_OBJECTS))

@@ -4,6 +4,8 @@ RM		:= rm
 PROJECT_DIR	:= $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 BUILD_DIR	:= $(PROJECT_DIR)/build
 
+QEMU	:= qemu-system-x86_64
+
 ASM		:= nasm -f bin
 CXX		:= x86_64-elf-g++
 AR		:= x86_64-elf-ar
@@ -21,9 +23,16 @@ include bootloader/Makefile
 include kernel/Makefile
 include libcxx/Makefile
 
-.PHONY: all libcxx kernel bootloader
+.PHONY: all clean qemu libcxx kernel bootloader
 
 all: bootloader kernel libcxx
+	printf "Fixing:\t\tsize loaded by stage1\n"
 	python2 scripts/fix_stage1_loaded_size.py
 	echo Writing to image: $(IMAGE_NAME)
-	cat $(BUILD_DIR)/bootloader/stage1.o $(BUILD_DIR)/bootloader/stage2.o $(BUILD_DIR)/kernel.o > $(BUILD_DIR)/$(IMAGE_NAME)
+	cat $(FILES_TO_IMAGE) > $(BUILD_DIR)/$(IMAGE_NAME)
+
+clean:
+	rm -rf $(BUILD_DIR)/**/*.o
+
+qemu:
+	$(QEMU) -drive format=raw,file=$(BUILD_DIR)/$(IMAGE_NAME)
