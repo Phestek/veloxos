@@ -43,7 +43,7 @@ disk_address_packet:
         dq      0x0000000000000001
 
 signature:
-        %if 510 - ($ - $$) > 510
+        %if $ - $$ > 510
             %fatal "stage1 code exceed 512 bytes."
         %endif
 
